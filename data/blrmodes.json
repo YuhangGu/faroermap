@@ -1,0 +1,724 @@
+
+[
+ {
+   "City": "Bengaluru",
+   "Mode": "Public Transport",
+   "Route_No": 1,
+   "Latitude": 12.94589413,
+   "Longitude": 77.52865404,
+   "Time": "19:10:31",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.94779253,
+   "Longitude": 77.53344893,
+   "Time": "19:11:05",
+   //time =>
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.95027503,
+   "Longitude": 77.53794413,
+   "Time": "19:12:12",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.95450984,
+   "Longitude": 77.54393773,
+   "Time": "19:13:01",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.9565542,
+   "Longitude": 77.54693453,
+   "Time": "19:14:33",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.95743035,
+   "Longitude": 77.55157958,
+   "Time": "19:15:23",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.95830649,
+   "Longitude": 77.55547542,
+   "Time": "19:16:32",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.96064287,
+   "Longitude": 77.55712366,
+   "Time": "19:17:31",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.96137298,
+   "Longitude": 77.5602703,
+   "Time": "19:18:06",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.9628332,
+   "Longitude": 77.56566454,
+   "Time": "19:19:08",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.96400137,
+   "Longitude": 77.56956039,
+   "Time": "19:20:31",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.96458545,
+   "Longitude": 77.57225751,
+   "Time": "19:21:09",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.96458545,
+   "Longitude": 77.57510447,
+   "Time": "19:22:15",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.96370933,
+   "Longitude": 77.57915015,
+   "Time": "19:23:38",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.96356331,
+   "Longitude": 77.58199711,
+   "Time": "19:24:28",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.96385535,
+   "Longitude": 77.58514376,
+   "Time": "19:25:19",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.96619168,
+   "Longitude": 77.58739136,
+   "Time": "19:26:01",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.968674,
+   "Longitude": 77.5897888,
+   "Time": "19:27:13",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.97159434,
+   "Longitude": 77.5927856,
+   "Time": "19:28:32",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 1,
+   "Latitude": 12.97422262,
+   "Longitude": 77.59563256,
+   "Time": "19:30:41",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.94589413,
+   "Longitude": 77.52865404,
+   "Time": "19:31:09",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.94779253,
+   "Longitude": 77.53344893,
+   "Time": "19:32:15",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.95027503,
+   "Longitude": 77.53794413,
+   "Time": "19:33:38",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.95450984,
+   "Longitude": 77.54393773,
+   "Time": "19:34:28",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.9565542,
+   "Longitude": 77.54693453,
+   "Time": "19:35:19",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.95743035,
+   "Longitude": 77.55157958,
+   "Time": "19:36:01",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.95830649,
+   "Longitude": 77.55547542,
+   "Time": "19:37:13",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.96064287,
+   "Longitude": 77.55712366,
+   "Time": "19:38:32",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.96137298,
+   "Longitude": 77.5602703,
+   "Time": "19:39:45",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.9628332,
+   "Longitude": 77.56566454,
+   "Time": "19:40:09",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.96400137,
+   "Longitude": 77.56956039,
+   "Time": "19:41:15",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.96458545,
+   "Longitude": 77.57225751,
+   "Time": "19:42:38",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.96458545,
+   "Longitude": 77.57510447,
+   "Time": "19:43:28",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.96370933,
+   "Longitude": 77.57915015,
+   "Time": "19:44:19",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.96356331,
+   "Longitude": 77.58199711,
+   "Time": "19:45:01",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.96385535,
+   "Longitude": 77.58514376,
+   "Time": "19:46:13",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.96619168,
+   "Longitude": 77.58739136,
+   "Time": "19:47:32",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.968674,
+   "Longitude": 77.5897888,
+   "Time": "19:48:45",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.97159434,
+   "Longitude": 77.5927856,
+   "Time": "19:49:09",
+   "Durations": 40
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 2,
+   "Latitude": 12.97422262,
+   "Longitude": 77.59563256,
+   "Time": "19:50:15",
+   "Durations": 40
+ },
+ {
+   "City": "Bengaluru",
+   "Mode": "Driving",
+   "Route_No": 0,
+   "Latitude": 12.94589413,
+   "Longitude": 77.52865404,
+   "Time": "19:10:32",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.94779253,
+   "Longitude": 77.53344893,
+   "Time": "19:15:07",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.95027503,
+   "Longitude": 77.53794413,
+   "Time": "19:18:10",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.95450984,
+   "Longitude": 77.54393773,
+   "Time": "19:23:01",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.9565542,
+   "Longitude": 77.54693453,
+   "Time": "19:27:33",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.95743035,
+   "Longitude": 77.55157958,
+   "Time": "19:32:23",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.95830649,
+   "Longitude": 77.55547542,
+   "Time": "19:39:32",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96064287,
+   "Longitude": 77.55712366,
+   "Time": "19:43:31",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96137298,
+   "Longitude": 77.5602703,
+   "Time": "19:51:06",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.9628332,
+   "Longitude": 77.56566454,
+   "Time": "19:58:08",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96400137,
+   "Longitude": 77.56956039,
+   "Time": "20:04:12",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96458545,
+   "Longitude": 77.57225751,
+   "Time": "20:08:16",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96458545,
+   "Longitude": 77.57510447,
+   "Time": "20:13:18",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96370933,
+   "Longitude": 77.57915015,
+   "Time": "20:17:21",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96356331,
+   "Longitude": 77.58199711,
+   "Time": "20:22:10",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96385535,
+   "Longitude": 77.58514376,
+   "Time": "20:29:12",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96619168,
+   "Longitude": 77.58739136,
+   "Time": "20:33:02",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.968674,
+   "Longitude": 77.5897888,
+   "Time": "20:37:05",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.97159434,
+   "Longitude": 77.5927856,
+   "Time": "20:44:16",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.97422262,
+   "Longitude": 77.59563256,
+   "Time": "20:48:18",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.94589413,
+   "Longitude": 77.52865404,
+   "Time": "20:51:57",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.94779253,
+   "Longitude": 77.53344893,
+   "Time": "20:58:48",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.95027503,
+   "Longitude": 77.53794413,
+   "Time": "21:02:14",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.95450984,
+   "Longitude": 77.54393773,
+   "Time": "21:06:20",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.9565542,
+   "Longitude": 77.54693453,
+   "Time": "21:12:31",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.95743035,
+   "Longitude": 77.55157958,
+   "Time": "21:15:34",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.95830649,
+   "Longitude": 77.55547542,
+   "Time": "21:18:52",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96064287,
+   "Longitude": 77.55712366,
+   "Time": "21:21:01",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96137298,
+   "Longitude": 77.5602703,
+   "Time": "21:22:11",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.9628332,
+   "Longitude": 77.56566454,
+   "Time": "21:28:16",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96400137,
+   "Longitude": 77.56956039,
+   "Time": "21:32:14",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96458545,
+   "Longitude": 77.57225751,
+   "Time": "21:36:16",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96458545,
+   "Longitude": 77.57510447,
+   "Time": "21:41:20",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96370933,
+   "Longitude": 77.57915015,
+   "Time": "21:44:49",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96356331,
+   "Longitude": 77.58199711,
+   "Time": "21:49:23",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96385535,
+   "Longitude": 77.58514376,
+   "Time": "21:51:41",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.96619168,
+   "Longitude": 77.58739136,
+   "Time": "21:57:12",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.968674,
+   "Longitude": 77.5897888,
+   "Time": "22:00:33",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.97159434,
+   "Longitude": 77.5927856,
+   "Time": "22:05:49",
+   "Durations": 122
+ },
+ {
+   "City": "",
+   "Mode": "",
+   "Route_No": 0,
+   "Latitude": 12.97422262,
+   "Longitude": 77.59563256,
+   "Time": "22:10:05",
+   "Durations": 122
+ }
+]
