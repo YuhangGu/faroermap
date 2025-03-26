@@ -267,7 +267,11 @@ async function initialize() {
 
     //createFlows_particles_speed()
 
-    createFlows_particles_frequency();
+    //createFlows_particles_frequency();
+
+    //createFlows_particles_speed_2D()
+    createFlows_particles_frequency_2D();
+
 
     //createFlows_3DWall();
 
@@ -1410,7 +1414,7 @@ async function createFlows_particles_frequency () {
                                 layer : i
                             });
                         }
-                        
+
                     }
 
                 }
@@ -1455,6 +1459,265 @@ async function createFlows_particles_frequency () {
 
 }
 
+async function createFlows_particles_speed_2D() {
+
+    console.log("Array.isArray(meshes) && meshes.some(Array.isArray)",
+        Array.isArray(meshes) && meshes.some(Array.isArray));
+    //判断是否二维
+    if (Array.isArray(meshes) && meshes.some(Array.isArray)) {
+        meshes = meshes.flat();
+        meshes.forEach(mesh => glScene.remove(mesh));
+    } else {
+        meshes.forEach(mesh => glScene.remove(mesh));
+    }
+
+    flying_balls.forEach(ball =>glScene.remove(ball.mesh));
+    flying_balls = [];
+
+    meshes = await dataMigration.migration.map(function (flows, i) {
+
+        // flow from A to B
+        if (i != 0 && i != dataMigration.migration.length - 1) {
+
+            let segments = [];
+
+            for (var j = 1; j < flows.length - 1; j++) {
+
+
+                // test the same city name
+                if (dataMigration.cities[i] == dataCities[i - 1].name
+                    && dataMigration.cities[j] == dataCities[j - 1].name
+                    && i != j) {
+
+                    var flowValue = dataMigration.migration[i][j];
+
+                    if (flowValue != 0) {
+
+
+                        var startName = dataCities[i - 1].name;
+                        var endName = dataCities[j - 1].name;
+
+                        var startGeo = dataCities[i - 1].geometry;
+                        var endGeo = dataCities[j - 1].geometry;
+
+                        const pointA = projectGeoPointsTo3D(startGeo);
+                        const pointB = projectGeoPointsTo3D(endGeo);
+
+                        //console.log(pointA, pointB)
+                        const distance = pointA.distanceTo(pointB);
+
+                        // 计算中点
+                        const midpoint_flat = new THREE.Vector3().addVectors(pointA, pointB).multiplyScalar(0.5);
+                        const zHeight_arc = (distance / 2 + 2) * 0.8;
+                        const midpoint = new THREE.Vector3(midpoint_flat.x, midpoint_flat.y, zHeight_arc);
+                        const curve = new THREE.CatmullRomCurve3([pointA, pointB]);
+
+                        let color = globalDivers_ColorScale(i);
+                        let color_path = "#676161";
+
+                        //create tube objects
+                        const tubularSegments = 32; // 沿曲线方向的细分数
+                        const radius = 1;
+                        //const radius = globalMigrationScale_clean(flowValue);           // 管道半径
+                        const radialSegments = 8;  // 管道横截面的细分数
+                        const closed = false;      // 管道两端是否闭合
+                        const geometry = new THREE.TubeGeometry(curve, tubularSegments, radius, radialSegments, closed);
+                        const material = new THREE.MeshLambertMaterial({
+                            color: color_path, // 让墙体醒目
+                            emissive: 0x440000,
+                            side: THREE.DoubleSide
+                        });
+
+                        const tube = new THREE.Mesh(geometry, material);
+                        tube.castShadow = true;
+                        tube.layers.set(i);
+
+                        glScene.add(tube);
+                        segments.push(tube);
+
+                        flying_balls.push({
+                            mesh: createSphere(color, pointA),
+                            curve: curve,
+                            speed: 0.002 * globalMigrationScale_clean(flowValue),
+                            progress: 0,
+                            layer : i });
+
+                    }
+
+                }
+
+            }
+
+            return segments;
+        }
+
+    });
+
+    flying_balls.forEach(ball => {
+
+        //console.log(ball.layer)
+        glScene.add(ball.mesh);
+        ball.mesh.layers.set(ball.layer)
+    });
+
+
+    function createSphere(color,point) {
+        const geometry = new THREE.SphereGeometry(20, 16, 16);
+        const material = new THREE.MeshLambertMaterial({ color });
+        return new THREE.Mesh(geometry, material);
+    }
+
+    resetLayerControls(true);
+
+    function projectGeoPointsTo3D(stop) {
+
+        var location_2D = graphics3D.projection(stop);
+
+        var point = new THREE.Vector3(0, 0, 0);
+
+        point.x = location_2D[0] - graphics3D.map_length / 2; // 向右移动1个单位
+        point.y = graphics3D.map_width / 2 - location_2D[1]; // 向下移动2个单位
+        point.z = 3;
+
+        return point;
+    }
+
+    //console.log(meshes);
+
+}
+
+async function createFlows_particles_frequency_2D () {
+
+    console.log("Array.isArray(meshes) && meshes.some(Array.isArray)",
+        Array.isArray(meshes) && meshes.some(Array.isArray));
+    //判断是否二维
+    if (Array.isArray(meshes) && meshes.some(Array.isArray)) {
+        meshes = meshes.flat();
+        meshes.forEach(mesh => glScene.remove(mesh));
+    } else {
+        meshes.forEach(mesh => glScene.remove(mesh));
+    }
+
+    flying_balls.forEach(ball =>glScene.remove(ball.mesh));
+    flying_balls = [];
+
+    meshes = await dataMigration.migration.map(function (flows, i) {
+
+        // flow from A to B
+        if (i != 0 && i != dataMigration.migration.length - 1) {
+
+            let segments = [];
+
+            for (var j = 1; j < flows.length - 1; j++) {
+
+
+                // test the same city name
+                if (dataMigration.cities[i] == dataCities[i - 1].name
+                    && dataMigration.cities[j] == dataCities[j - 1].name
+                    && i != j) {
+
+                    var flowValue = dataMigration.migration[i][j];
+
+                    if (flowValue != 0) {
+
+                        var startName = dataCities[i - 1].name;
+                        var endName = dataCities[j - 1].name;
+
+                        var startGeo = dataCities[i - 1].geometry;
+                        var endGeo = dataCities[j - 1].geometry;
+
+                        const pointA = projectGeoPointsTo3D(startGeo);
+                        const pointB = projectGeoPointsTo3D(endGeo);
+
+                        //console.log(pointA, pointB)
+                        const distance = pointA.distanceTo(pointB);
+
+                        // 计算中点
+                        const midpoint_flat = new THREE.Vector3().addVectors(pointA, pointB).multiplyScalar(0.5);
+                        const zHeight_arc = (distance / 2 + 2) * 0.8;
+                        const midpoint = new THREE.Vector3(midpoint_flat.x, midpoint_flat.y, zHeight_arc);
+                        const curve = new THREE.CatmullRomCurve3([pointA, pointB]);
+
+                        let color = globalDivers_ColorScale(i);
+                        let color_path = "#676161";
+
+                        //create tube objects
+                        const tubularSegments = 32; // 沿曲线方向的细分数
+                        const radius = 1;
+                        //const radius = globalMigrationScale_clean(flowValue);           // 管道半径
+                        const radialSegments = 8;  // 管道横截面的细分数
+                        const closed = false;      // 管道两端是否闭合
+                        const geometry = new THREE.TubeGeometry(curve, tubularSegments, radius, radialSegments, closed);
+                        const material = new THREE.MeshLambertMaterial({
+                            color: color_path, // 让墙体醒目
+                            emissive: 0x440000,
+                            side: THREE.DoubleSide
+                        });
+
+                        const tube = new THREE.Mesh(geometry, material);
+                        tube.castShadow = true;
+                        tube.layers.set(i);
+
+                        glScene.add(tube);
+                        segments.push(tube);
+
+                        // create numbers sphere
+                        var count = globalMigrationScale_clean_order(flowValue)
+                        console.log("count",count);
+                        for (let j = 0; j < count; j++) {
+                            const progress = j / count; // 均匀分布小球
+                            flying_balls.push({
+                                mesh: createSphere(color, pointA),
+                                curve: curve,
+                                speed: 0.005,
+                                progress: progress,
+                                layer : i
+                            });
+                        }
+
+                    }
+
+                }
+
+            }
+
+            return segments;
+        }
+
+    });
+
+    flying_balls.forEach(ball => {
+
+        //console.log(ball.layer)
+        glScene.add(ball.mesh);
+        ball.mesh.layers.set(ball.layer)
+    });
+
+
+    function createSphere(color,point) {
+        const geometry = new THREE.SphereGeometry(20, 16, 16);
+        const material = new THREE.MeshLambertMaterial({ color });
+        return new THREE.Mesh(geometry, material);
+    }
+
+    resetLayerControls(true);
+
+    function projectGeoPointsTo3D(stop) {
+
+        var location_2D = graphics3D.projection(stop);
+
+        var point = new THREE.Vector3(0, 0, 0);
+
+        point.x = location_2D[0] - graphics3D.map_length / 2; // 向右移动1个单位
+        point.y = graphics3D.map_width / 2 - location_2D[1]; // 向下移动2个单位
+        point.z = 3;
+
+        return point;
+    }
+
+    //console.log(meshes);
+
+}
 
 
 function drawLinesOnPlane(vertices, troops, temperatures, coor) {
@@ -1621,6 +1884,12 @@ function updateVisualizationMethods(selectedMethod) {
     }
     else if (selectedMethod == "particles_frequency") {
         createFlows_particles_frequency();
+    }
+    else if (selectedMethod == "particles_speed_2D") {
+        createFlows_particles_speed_2D();
+    }
+    else if (selectedMethod == "particles_frequency_2D") {
+        createFlows_particles_frequency_2D();
     }
 
 }
