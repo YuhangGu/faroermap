@@ -4,6 +4,11 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import {CSS3DRenderer, CSS3DObject} from 'three/addons/renderers/CSS3DRenderer.js';
 import {TrackballControls} from 'three/addons/controls/TrackballControls.js';
 
+import { LineMaterial } from 'https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/lines/LineMaterial.js';
+import { LineGeometry } from 'https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/lines/LineGeometry.js';
+import { Line2 } from 'https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/lines/Line2.js';
+
+
 // initial elements of the 3D scene
 var controls, camera, glScene, cssScene, glRenderer, cssRenderer;
 var theMap = null;
@@ -270,9 +275,10 @@ async function initialize() {
     //createFlows_particles_frequency();
 
     //createFlows_particles_speed_2D()
-    createFlows_particles_frequency_2D();
 
+    //createFlows_particles_frequency_2D();
 
+    createFlows_2DWall();
     //createFlows_3DWall();
 
     //createFlows_Old();
@@ -766,7 +772,7 @@ async function createFlows_3DWall_Old() {
             const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
 
             wallMesh.castShadow = true;
-            wallMesh.layers.set(index + 1);
+            wallMesh.layers.set(index);
 
             glScene.add(wallMesh);
             segments.push(wallMesh);
@@ -847,7 +853,7 @@ async function createFlows_STC() {
             //material = new THREE.MeshLambertMaterial({opacity: 1,transparent: true,  color: color });
 
             segmentMesh.castShadow = true;
-            segmentMesh.layers.set(index + 1);
+            segmentMesh.layers.set(index);
 
             glScene.add(segmentMesh);
             segments.push(segmentMesh);
@@ -961,7 +967,7 @@ async function createFlows_3DWall() {
                             const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
 
                             wallMesh.castShadow = true;
-                            wallMesh.layers.set(i + 1);
+                            wallMesh.layers.set(i);
 
                             glScene.add(wallMesh);
                             segments.push(wallMesh);
@@ -988,7 +994,7 @@ async function createFlows_3DWall() {
             cylinder_total.rotation.x = Math.PI / 2;
             const z_trans_1 = height_total / 2;
             cylinder_total.position.set(pointCity.x, pointCity.y, pointCity.z + z_trans_1);  // (x, y, z)
-            cylinder_total.layers.set(i + 1);
+            cylinder_total.layers.set(i);
 
 
             glScene.add(cylinder_total);
@@ -1003,7 +1009,7 @@ async function createFlows_3DWall() {
             cylinder_domanstic.rotation.x = Math.PI / 2;
             const z_trans_2 = height_total + height_domanstic/2 + 2;
             cylinder_domanstic.position.set(pointCity.x, pointCity.y, pointCity.z + z_trans_2);  // (x, y, z)
-            cylinder_domanstic.layers.set(i + 1);
+            cylinder_domanstic.layers.set(i );
 
 
             glScene.add(cylinder_domanstic);
@@ -1019,11 +1025,116 @@ async function createFlows_3DWall() {
             cylinder_aboard.rotation.x = Math.PI / 2;
             const z_trans_3 = height_total + height_domanstic + height_aboard/2 + 4;
             cylinder_aboard.position.set(pointCity.x, pointCity.y, pointCity.z + z_trans_3);  // (x, y, z)
-            cylinder_aboard.layers.set(i + 1);
+            cylinder_aboard.layers.set(i);
 
 
             glScene.add(cylinder_aboard);
             segments.push(cylinder_aboard);
+
+
+            return segments;
+
+        }
+
+
+    })
+
+    resetLayerControls(true);
+
+    function projectGeoPointsTo3D(stop) {
+
+        var location_2D = graphics3D.projection(stop);
+
+        var point = new THREE.Vector3(0, 0, 0);
+
+        point.x = location_2D[0] - graphics3D.map_length / 2; // 向右移动1个单位
+        point.y = graphics3D.map_width / 2 - location_2D[1]; // 向下移动2个单位
+        point.z = 3;
+
+        return point;
+    }
+
+    //console.log(meshes);
+
+}
+
+async function createFlows_2DWall() {
+
+    console.log("Array.isArray(meshes) && meshes.some(Array.isArray)",
+        Array.isArray(meshes) && meshes.some(Array.isArray));
+    //判断是否二维
+    if (Array.isArray(meshes) && meshes.some(Array.isArray)) {
+        meshes = meshes.flat();
+        meshes.forEach(mesh => glScene.remove(mesh));
+    } else {
+        meshes.forEach(mesh => glScene.remove(mesh));
+    }
+
+    //console.log(dataMigration)
+
+    flying_balls.forEach(ball =>glScene.remove(ball.mesh));
+    flying_balls = [];
+
+
+    meshes = dataMigration.migration.map(function (flows, i) {
+
+        let segments = [];
+        const color = globalDivers_ColorScale(i);
+
+        // 排除第一行和最后一行
+        if (i != 0 && i != dataMigration.migration.length - 1) {
+
+            //遍历除了第一列，最后一列，对角线
+            for (var j = 1; j < flows.length - 1; j++) {
+
+                //排除value为0
+                if (dataMigration.migration[i][j] != 0) {
+
+                    var flowValue = dataMigration.migration[i][j];
+
+                    // 排除第一列，最后一列，对角线
+                    if (j != i) {
+
+                        // test the same city name
+                        if (dataMigration.cities[i] == dataCities[i - 1].name
+                            && dataMigration.cities[j] == dataCities[j - 1].name) {
+
+                            var startName = dataCities[i - 1].name;
+                            var endName = dataCities[j - 1].name;
+
+                            var startGeo = dataCities[i - 1].geometry;
+                            var endGeo = dataCities[j - 1].geometry;
+                            const thickness = globalMigrationScale_clean(flowValue)*2;           // 管道半径
+
+                            const start = projectGeoPointsTo3D(startGeo);
+                            const end = projectGeoPointsTo3D(endGeo);
+
+                            // 计算两点之间的方向和长度
+                            const dir = new THREE.Vector3().subVectors(end, start);
+                            const length = dir.length();
+                            const angle = Math.atan2(dir.y, dir.x); // 计算角度
+
+                            // 创建一个 PlaneGeometry 作为 2D 线
+                            const geometry = new THREE.PlaneGeometry(length, thickness); // 0.1 = 线的宽度
+                            const material = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
+                            const line = new THREE.Mesh(geometry, material);
+
+                            // 设置线段的位置和旋转
+                            line.position.copy(start.clone().add(end).multiplyScalar(0.5)); // 取中点
+                            line.rotation.z = angle; // 旋转到正确角度
+
+                            line.layers.set(i);
+
+                            glScene.add(line);
+                            segments.push(line);
+                        }
+
+                    }
+
+
+                }
+
+            }//for finished
 
 
             return segments;
@@ -1874,6 +1985,8 @@ function updateVisualizationMethods(selectedMethod) {
     //console.log(selectedMethod);
     if (selectedMethod == "wall") {
         createFlows_3DWall();
+    } else if (selectedMethod == "wall_2D") {
+        createFlows_2DWall();
     } else if (selectedMethod == "arcs") {
         createFlows_arc();
     } else if (selectedMethod == "particles") {
