@@ -45,6 +45,7 @@ let globalZAxisScale = null;
 
 let globalMigrationScale = null;
 let globalMigrationScale_clean = null;
+let globalMigrationScale_clean_order = null;
 
 let corpsNameList = null;
 
@@ -57,6 +58,8 @@ let meshes = [];
 let dataFaroeGeo = [];
 let dataMigration = [];
 let dataCities = [];
+
+let flying_balls = [];
 
 let faroerProjection = null;
 
@@ -248,7 +251,8 @@ async function initialize() {
 
     globalMigrationScale = d3.scaleLinear().domain(globalMigrationRange).range([10, 40])
     globalMigrationScale_clean = d3.scaleLinear().domain(globalMigrationRange_clean).range([2, 30])
-
+    globalMigrationScale_clean_order =
+        d3.scaleQuantize().domain(globalMigrationRange_clean).range([ 2, 3, 4, 5, 6,7]);
 
     //-------------create flow map-------------
     //createMap();
@@ -261,7 +265,11 @@ async function initialize() {
 
     //createFlows_STC();
 
-    createFlows_3DWall();
+    //createFlows_particles_speed()
+
+    createFlows_particles_frequency();
+
+    //createFlows_3DWall();
 
     //createFlows_Old();
 
@@ -315,6 +323,9 @@ async function initialize() {
     });
 
     update();
+
+    animate();
+
 
     // 处理下拉框选择事件
     document.getElementById('objectSelector').addEventListener('change', function (event) {
@@ -551,23 +562,21 @@ function draw3DCitiesOnMap() {
         //console.log(d.name, location);
 
         // 创建球体几何体
-        const radius = 10; // 半径
+        const radius = 5; // 半径
         const widthSegments = 32; // 水平方向上的分段数
         const heightSegments = 32; // 垂直方向上的分段数
         const geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
 
-// 创建材质
-        const material = new THREE.MeshLambertMaterial({color: 0xe4ec17, wireframe: true});
+        // 创建材质
+        const material = new THREE.MeshLambertMaterial({color: "rgba(41,91,21,0.35)", wireframe: true});
 
-
-// 创建网格对象
+        // 创建网格对象
         const sphere = new THREE.Mesh(geometry, material);
         sphere.position.x = location[0] - graphics3D.map_length / 2; // 向右移动1个单位
         sphere.position.y = graphics3D.map_width / 2 - location[1]; // 向下移动2个单位
         sphere.position.z = 3;
 
-// 创建标签元素
-
+        // 创建标签元素
         //var map_container = document.getElementById("map_container_1").createElement('div');
         const labelDiv = document.createElement('div');
         labelDiv.className = 'label' + i;
@@ -688,173 +697,7 @@ function createMap() {
 
 }
 
-async function createFlows_3DWall() {
 
-    console.log("Array.isArray(meshes) && meshes.some(Array.isArray)",
-        Array.isArray(meshes) && meshes.some(Array.isArray));
-    //判断是否二维
-    if (Array.isArray(meshes) && meshes.some(Array.isArray)) {
-        meshes = meshes.flat();
-        meshes.forEach(mesh => glScene.remove(mesh));
-    } else {
-        meshes.forEach(mesh => glScene.remove(mesh));
-    }
-
-    console.log(dataMigration)
-
-    meshes = dataMigration.migration.map(function (flows, i) {
-
-        let segments = [];
-        const color = globalDivers_ColorScale(i);
-
-
-        // 排除第一行和最后一行
-        if (i != 0 && i != dataMigration.migration.length - 1) {
-
-            //遍历除了第一列，最后一列，对角线
-            for (var j = 1; j < flows.length - 1; j++) {
-
-                //排除value为0
-                if (dataMigration.migration[i][j] != 0) {
-
-                    var flowValue = dataMigration.migration[i][j];
-
-                    // 排除第一列，最后一列，对角线
-                    if (j != i) {
-
-                        // test the same city name
-                        if (dataMigration.cities[i] == dataCities[i - 1].name
-                            && dataMigration.cities[j] == dataCities[j - 1].name) {
-
-                            var startName = dataCities[i - 1].name;
-                            var endName = dataCities[j - 1].name;
-
-                            var startGeo = dataCities[i - 1].geometry;
-                            var endGeo = dataCities[j - 1].geometry;
-
-                            const pointA = projectGeoPointsTo3D(startGeo);
-                            const pointB = projectGeoPointsTo3D(endGeo);
-
-                            const segmentCurve = new THREE.CatmullRomCurve3([pointA, pointB]);
-                            const radius = globalMigrationScale_clean(flowValue);           // 管道半径
-
-                            // 5️⃣ 创建墙的剖面（矩形）
-                            const wallHeight = 3;
-                            const wallThickness = -radius * 10;
-                            const shape = new THREE.Shape();
-                            shape.moveTo(0, 0);
-                            shape.lineTo(0, wallHeight);
-                            shape.lineTo(wallThickness, wallHeight);
-                            shape.lineTo(wallThickness, 0);
-                            shape.closePath();
-
-                            // 6️⃣ 使用 `ExtrudeGeometry` 沿折线生成墙体
-                            const extrudeSettings = {
-                                steps: 4,
-                                bevelEnabled: false,
-                                extrudePath: segmentCurve // 沿着折线挤出
-                            };
-
-                            const wallGeometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-                            const wallMaterial = new THREE.MeshLambertMaterial({
-                                color: color, // 让墙体醒目
-                                emissive: 0x440000,
-                                side: THREE.DoubleSide
-                            });
-
-                            const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
-
-                            wallMesh.castShadow = true;
-                            wallMesh.layers.set(i + 1);
-
-                            glScene.add(wallMesh);
-                            segments.push(wallMesh);
-
-                        }
-
-                    }
-
-
-                }
-
-            }//for finished
-
-            const cityLocation = dataCities[i - 1].geometry;
-            const pointCity = projectGeoPointsTo3D(cityLocation);
-
-
-            // add pilar total
-
-            const height_total = 10 * globalMigrationScale(dataMigration.migration[i][0]);
-            const geometry_total = new THREE.CylinderGeometry(10, 10, height_total, 32);
-            const material = new THREE.MeshLambertMaterial({color: color}); // 线框模式
-            const cylinder_total = new THREE.Mesh(geometry_total, material);
-            cylinder_total.rotation.x = Math.PI / 2;
-            const z_trans_1 = height_total / 2;
-            cylinder_total.position.set(pointCity.x, pointCity.y, pointCity.z + z_trans_1);  // (x, y, z)
-            cylinder_total.layers.set(i + 1);
-
-
-            glScene.add(cylinder_total);
-            segments.push(cylinder_total);
-
-            //______domanstic
-            const color_domanstic = "#0d81f5";
-            const height_domanstic = 10 * globalMigrationScale(dataMigration.migration[i][i]);
-            const geometry_domanstic = new THREE.CylinderGeometry(10, 10, height_domanstic, 32);
-            const material_domanstic = new THREE.MeshLambertMaterial({color: color_domanstic }); // 线框模式
-            const cylinder_domanstic = new THREE.Mesh(geometry_domanstic, material_domanstic);
-            cylinder_domanstic.rotation.x = Math.PI / 2;
-            const z_trans_2 = height_total + height_domanstic/2 + 2;
-            cylinder_domanstic.position.set(pointCity.x, pointCity.y, pointCity.z + z_trans_2);  // (x, y, z)
-            cylinder_domanstic.layers.set(i + 1);
-
-
-            glScene.add(cylinder_domanstic);
-            segments.push(cylinder_domanstic);
-
-            //______abord__
-            const color_aboard = "rgba(82,229,8,0.35)";
-
-            const height_aboard = 10 * globalMigrationScale(dataMigration.migration[i][dataMigration.migration.length-1]);
-            const geometry_aboard = new THREE.CylinderGeometry(10, 10, height_aboard, 32);
-            const material_aboard = new THREE.MeshLambertMaterial({color: color_aboard}); // 线框模式
-            const cylinder_aboard = new THREE.Mesh(geometry_aboard, material_aboard);
-            cylinder_aboard.rotation.x = Math.PI / 2;
-            const z_trans_3 = height_total + height_domanstic + height_aboard/2 + 4;
-            cylinder_aboard.position.set(pointCity.x, pointCity.y, pointCity.z + z_trans_3);  // (x, y, z)
-            cylinder_aboard.layers.set(i + 1);
-
-
-            glScene.add(cylinder_aboard);
-            segments.push(cylinder_aboard);
-
-
-            return segments;
-
-        }
-
-
-    })
-
-    resetLayerControls(true);
-
-    function projectGeoPointsTo3D(stop) {
-
-        var location_2D = graphics3D.projection(stop);
-
-        var point = new THREE.Vector3(0, 0, 0);
-
-        point.x = location_2D[0] - graphics3D.map_length / 2; // 向右移动1个单位
-        point.y = graphics3D.map_width / 2 - location_2D[1]; // 向下移动2个单位
-        point.z = 3;
-
-        return point;
-    }
-
-    //console.log(meshes);
-
-}
 
 
 //-------------create flow map graphics-------------
@@ -1033,6 +876,178 @@ async function createFlows_STC() {
 
 }
 
+async function createFlows_3DWall() {
+
+    console.log("Array.isArray(meshes) && meshes.some(Array.isArray)",
+        Array.isArray(meshes) && meshes.some(Array.isArray));
+    //判断是否二维
+    if (Array.isArray(meshes) && meshes.some(Array.isArray)) {
+        meshes = meshes.flat();
+        meshes.forEach(mesh => glScene.remove(mesh));
+    } else {
+        meshes.forEach(mesh => glScene.remove(mesh));
+    }
+
+    //console.log(dataMigration)
+
+    flying_balls.forEach(ball =>glScene.remove(ball.mesh));
+    flying_balls = [];
+
+
+    meshes = dataMigration.migration.map(function (flows, i) {
+
+        let segments = [];
+        const color = globalDivers_ColorScale(i);
+
+
+        // 排除第一行和最后一行
+        if (i != 0 && i != dataMigration.migration.length - 1) {
+
+            //遍历除了第一列，最后一列，对角线
+            for (var j = 1; j < flows.length - 1; j++) {
+
+                //排除value为0
+                if (dataMigration.migration[i][j] != 0) {
+
+                    var flowValue = dataMigration.migration[i][j];
+
+                    // 排除第一列，最后一列，对角线
+                    if (j != i) {
+
+                        // test the same city name
+                        if (dataMigration.cities[i] == dataCities[i - 1].name
+                            && dataMigration.cities[j] == dataCities[j - 1].name) {
+
+                            var startName = dataCities[i - 1].name;
+                            var endName = dataCities[j - 1].name;
+
+                            var startGeo = dataCities[i - 1].geometry;
+                            var endGeo = dataCities[j - 1].geometry;
+
+                            const pointA = projectGeoPointsTo3D(startGeo);
+                            const pointB = projectGeoPointsTo3D(endGeo);
+
+                            const segmentCurve = new THREE.CatmullRomCurve3([pointA, pointB]);
+                            const radius = globalMigrationScale_clean(flowValue);           // 管道半径
+
+                            // 5️⃣ 创建墙的剖面（矩形）
+                            const wallHeight = 3;
+                            const wallThickness = -radius * 10;
+                            const shape = new THREE.Shape();
+                            shape.moveTo(0, 0);
+                            shape.lineTo(0, wallHeight);
+                            shape.lineTo(wallThickness, wallHeight);
+                            shape.lineTo(wallThickness, 0);
+                            shape.closePath();
+
+                            // 6️⃣ 使用 `ExtrudeGeometry` 沿折线生成墙体
+                            const extrudeSettings = {
+                                steps: 4,
+                                bevelEnabled: false,
+                                extrudePath: segmentCurve // 沿着折线挤出
+                            };
+
+                            const wallGeometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                            const wallMaterial = new THREE.MeshLambertMaterial({
+                                color: color, // 让墙体醒目
+                                emissive: 0x440000,
+                                side: THREE.DoubleSide
+                            });
+
+                            const wallMesh = new THREE.Mesh(wallGeometry, wallMaterial);
+
+                            wallMesh.castShadow = true;
+                            wallMesh.layers.set(i + 1);
+
+                            glScene.add(wallMesh);
+                            segments.push(wallMesh);
+
+                        }
+
+                    }
+
+
+                }
+
+            }//for finished
+
+            const cityLocation = dataCities[i - 1].geometry;
+            const pointCity = projectGeoPointsTo3D(cityLocation);
+
+
+            // add pilar total
+
+            const height_total = 10 * globalMigrationScale(dataMigration.migration[i][0]);
+            const geometry_total = new THREE.CylinderGeometry(10, 10, height_total, 32);
+            const material = new THREE.MeshLambertMaterial({color: color}); // 线框模式
+            const cylinder_total = new THREE.Mesh(geometry_total, material);
+            cylinder_total.rotation.x = Math.PI / 2;
+            const z_trans_1 = height_total / 2;
+            cylinder_total.position.set(pointCity.x, pointCity.y, pointCity.z + z_trans_1);  // (x, y, z)
+            cylinder_total.layers.set(i + 1);
+
+
+            glScene.add(cylinder_total);
+            segments.push(cylinder_total);
+
+            //______domanstic
+            const color_domanstic = "#0d81f5";
+            const height_domanstic = 10 * globalMigrationScale(dataMigration.migration[i][i]);
+            const geometry_domanstic = new THREE.CylinderGeometry(10, 10, height_domanstic, 32);
+            const material_domanstic = new THREE.MeshLambertMaterial({color: color_domanstic }); // 线框模式
+            const cylinder_domanstic = new THREE.Mesh(geometry_domanstic, material_domanstic);
+            cylinder_domanstic.rotation.x = Math.PI / 2;
+            const z_trans_2 = height_total + height_domanstic/2 + 2;
+            cylinder_domanstic.position.set(pointCity.x, pointCity.y, pointCity.z + z_trans_2);  // (x, y, z)
+            cylinder_domanstic.layers.set(i + 1);
+
+
+            glScene.add(cylinder_domanstic);
+            segments.push(cylinder_domanstic);
+
+            //______abord__
+            const color_aboard = "rgba(82,229,8,0.35)";
+
+            const height_aboard = 10 * globalMigrationScale(dataMigration.migration[i][dataMigration.migration.length-1]);
+            const geometry_aboard = new THREE.CylinderGeometry(10, 10, height_aboard, 32);
+            const material_aboard = new THREE.MeshLambertMaterial({color: color_aboard}); // 线框模式
+            const cylinder_aboard = new THREE.Mesh(geometry_aboard, material_aboard);
+            cylinder_aboard.rotation.x = Math.PI / 2;
+            const z_trans_3 = height_total + height_domanstic + height_aboard/2 + 4;
+            cylinder_aboard.position.set(pointCity.x, pointCity.y, pointCity.z + z_trans_3);  // (x, y, z)
+            cylinder_aboard.layers.set(i + 1);
+
+
+            glScene.add(cylinder_aboard);
+            segments.push(cylinder_aboard);
+
+
+            return segments;
+
+        }
+
+
+    })
+
+    resetLayerControls(true);
+
+    function projectGeoPointsTo3D(stop) {
+
+        var location_2D = graphics3D.projection(stop);
+
+        var point = new THREE.Vector3(0, 0, 0);
+
+        point.x = location_2D[0] - graphics3D.map_length / 2; // 向右移动1个单位
+        point.y = graphics3D.map_width / 2 - location_2D[1]; // 向下移动2个单位
+        point.z = 3;
+
+        return point;
+    }
+
+    //console.log(meshes);
+
+}
+
 async function createFlows_arc() {
 
     console.log("Array.isArray(meshes) && meshes.some(Array.isArray)",
@@ -1045,7 +1060,8 @@ async function createFlows_arc() {
         meshes.forEach(mesh => glScene.remove(mesh));
     }
 
-    console.log(dataMigration)
+    flying_balls.forEach(ball =>glScene.remove(ball.mesh));
+    flying_balls = [];
 
     meshes = dataMigration.migration.map(function (flows, i) {
 
@@ -1177,6 +1193,268 @@ async function createFlows_arc() {
     //console.log(meshes);
 
 }
+
+async function createFlows_particles_speed() {
+
+    console.log("Array.isArray(meshes) && meshes.some(Array.isArray)",
+        Array.isArray(meshes) && meshes.some(Array.isArray));
+    //判断是否二维
+    if (Array.isArray(meshes) && meshes.some(Array.isArray)) {
+        meshes = meshes.flat();
+        meshes.forEach(mesh => glScene.remove(mesh));
+    } else {
+        meshes.forEach(mesh => glScene.remove(mesh));
+    }
+
+    flying_balls.forEach(ball =>glScene.remove(ball.mesh));
+    flying_balls = [];
+
+    meshes = await dataMigration.migration.map(function (flows, i) {
+
+        // flow from A to B
+        if (i != 0 && i != dataMigration.migration.length - 1) {
+
+            let segments = [];
+
+            for (var j = 1; j < flows.length - 1; j++) {
+
+
+                // test the same city name
+                if (dataMigration.cities[i] == dataCities[i - 1].name
+                    && dataMigration.cities[j] == dataCities[j - 1].name
+                    && i != j) {
+
+                    var flowValue = dataMigration.migration[i][j];
+
+                    if (flowValue != 0) {
+
+
+                        var startName = dataCities[i - 1].name;
+                        var endName = dataCities[j - 1].name;
+
+                        var startGeo = dataCities[i - 1].geometry;
+                        var endGeo = dataCities[j - 1].geometry;
+
+                        const pointA = projectGeoPointsTo3D(startGeo);
+                        const pointB = projectGeoPointsTo3D(endGeo);
+
+                        //console.log(pointA, pointB)
+                        const distance = pointA.distanceTo(pointB);
+
+                        // 计算中点
+                        const midpoint_flat = new THREE.Vector3().addVectors(pointA, pointB).multiplyScalar(0.5);
+                        const zHeight_arc = (distance / 2 + 2) * 0.8;
+                        const midpoint = new THREE.Vector3(midpoint_flat.x, midpoint_flat.y, zHeight_arc);
+                        const curve = new THREE.CatmullRomCurve3([pointA, midpoint, pointB]);
+
+                        let color = globalDivers_ColorScale(i);
+                        let color_path = "#676161";
+
+                        //create tube objects
+                        const tubularSegments = 32; // 沿曲线方向的细分数
+                        const radius = 1;
+                        //const radius = globalMigrationScale_clean(flowValue);           // 管道半径
+                        const radialSegments = 8;  // 管道横截面的细分数
+                        const closed = false;      // 管道两端是否闭合
+                        const geometry = new THREE.TubeGeometry(curve, tubularSegments, radius, radialSegments, closed);
+                        const material = new THREE.MeshLambertMaterial({
+                            color: color_path, // 让墙体醒目
+                            emissive: 0x440000,
+                            side: THREE.DoubleSide
+                        });
+
+                        const tube = new THREE.Mesh(geometry, material);
+                        tube.castShadow = true;
+                        tube.layers.set(i);
+
+                        glScene.add(tube);
+                        segments.push(tube);
+
+                        flying_balls.push({
+                            mesh: createSphere(color, pointA),
+                            curve: curve,
+                            speed: 0.002 * globalMigrationScale_clean(flowValue),
+                            progress: 0,
+                            layer : i });
+
+                    }
+
+                }
+
+            }
+
+            return segments;
+        }
+
+    });
+
+    flying_balls.forEach(ball => {
+
+        //console.log(ball.layer)
+        glScene.add(ball.mesh);
+        ball.mesh.layers.set(ball.layer)
+    });
+
+
+    function createSphere(color,point) {
+        const geometry = new THREE.SphereGeometry(20, 16, 16);
+        const material = new THREE.MeshLambertMaterial({ color });
+        return new THREE.Mesh(geometry, material);
+    }
+
+    resetLayerControls(true);
+
+    function projectGeoPointsTo3D(stop) {
+
+        var location_2D = graphics3D.projection(stop);
+
+        var point = new THREE.Vector3(0, 0, 0);
+
+        point.x = location_2D[0] - graphics3D.map_length / 2; // 向右移动1个单位
+        point.y = graphics3D.map_width / 2 - location_2D[1]; // 向下移动2个单位
+        point.z = 3;
+
+        return point;
+    }
+
+    //console.log(meshes);
+
+}
+
+async function createFlows_particles_frequency () {
+
+    console.log("Array.isArray(meshes) && meshes.some(Array.isArray)",
+        Array.isArray(meshes) && meshes.some(Array.isArray));
+    //判断是否二维
+    if (Array.isArray(meshes) && meshes.some(Array.isArray)) {
+        meshes = meshes.flat();
+        meshes.forEach(mesh => glScene.remove(mesh));
+    } else {
+        meshes.forEach(mesh => glScene.remove(mesh));
+    }
+
+    flying_balls.forEach(ball =>glScene.remove(ball.mesh));
+    flying_balls = [];
+
+    meshes = await dataMigration.migration.map(function (flows, i) {
+
+        // flow from A to B
+        if (i != 0 && i != dataMigration.migration.length - 1) {
+
+            let segments = [];
+
+            for (var j = 1; j < flows.length - 1; j++) {
+
+
+                // test the same city name
+                if (dataMigration.cities[i] == dataCities[i - 1].name
+                    && dataMigration.cities[j] == dataCities[j - 1].name
+                    && i != j) {
+
+                    var flowValue = dataMigration.migration[i][j];
+
+                    if (flowValue != 0) {
+
+
+                        var startName = dataCities[i - 1].name;
+                        var endName = dataCities[j - 1].name;
+
+                        var startGeo = dataCities[i - 1].geometry;
+                        var endGeo = dataCities[j - 1].geometry;
+
+                        const pointA = projectGeoPointsTo3D(startGeo);
+                        const pointB = projectGeoPointsTo3D(endGeo);
+
+                        //console.log(pointA, pointB)
+                        const distance = pointA.distanceTo(pointB);
+
+                        // 计算中点
+                        const midpoint_flat = new THREE.Vector3().addVectors(pointA, pointB).multiplyScalar(0.5);
+                        const zHeight_arc = (distance / 2 + 2) * 0.8;
+                        const midpoint = new THREE.Vector3(midpoint_flat.x, midpoint_flat.y, zHeight_arc);
+                        const curve = new THREE.CatmullRomCurve3([pointA, midpoint, pointB]);
+
+                        let color = globalDivers_ColorScale(i);
+                        let color_path = "#676161";
+
+                        //create tube objects
+                        const tubularSegments = 32; // 沿曲线方向的细分数
+                        const radius = 1;
+                        //const radius = globalMigrationScale_clean(flowValue);           // 管道半径
+                        const radialSegments = 8;  // 管道横截面的细分数
+                        const closed = false;      // 管道两端是否闭合
+                        const geometry = new THREE.TubeGeometry(curve, tubularSegments, radius, radialSegments, closed);
+                        const material = new THREE.MeshLambertMaterial({
+                            color: color_path, // 让墙体醒目
+                            emissive: 0x440000,
+                            side: THREE.DoubleSide
+                        });
+
+                        const tube = new THREE.Mesh(geometry, material);
+                        tube.castShadow = true;
+                        tube.layers.set(i);
+
+                        glScene.add(tube);
+                        segments.push(tube);
+
+                        // create numbers sphere
+                        var count = globalMigrationScale_clean_order(flowValue)
+                        console.log("count",count);
+                        for (let j = 0; j < count; j++) {
+                            const progress = j / count; // 均匀分布小球
+                            flying_balls.push({
+                                mesh: createSphere(color, pointA),
+                                curve: curve,
+                                speed: 0.005,
+                                progress: progress,
+                                layer : i
+                            });
+                        }
+                        
+                    }
+
+                }
+
+            }
+
+            return segments;
+        }
+
+    });
+
+    flying_balls.forEach(ball => {
+
+        //console.log(ball.layer)
+        glScene.add(ball.mesh);
+        ball.mesh.layers.set(ball.layer)
+    });
+
+
+    function createSphere(color,point) {
+        const geometry = new THREE.SphereGeometry(20, 16, 16);
+        const material = new THREE.MeshLambertMaterial({ color });
+        return new THREE.Mesh(geometry, material);
+    }
+
+    resetLayerControls(true);
+
+    function projectGeoPointsTo3D(stop) {
+
+        var location_2D = graphics3D.projection(stop);
+
+        var point = new THREE.Vector3(0, 0, 0);
+
+        point.x = location_2D[0] - graphics3D.map_length / 2; // 向右移动1个单位
+        point.y = graphics3D.map_width / 2 - location_2D[1]; // 向下移动2个单位
+        point.z = 3;
+
+        return point;
+    }
+
+    //console.log(meshes);
+
+}
+
 
 
 function drawLinesOnPlane(vertices, troops, temperatures, coor) {
@@ -1331,17 +1609,19 @@ function resetLayerControls(switchCheckbox) {
 
 function updateVisualizationMethods(selectedMethod) {
     //console.log(selectedMethod);
-    if (selectedMethod == "stc") {
-        createFlows_STC();
-    } else if (selectedMethod == "wall") {
+    if (selectedMethod == "wall") {
         createFlows_3DWall();
     } else if (selectedMethod == "arcs") {
         createFlows_arc();
+    } else if (selectedMethod == "particles") {
+        createFlows_particles_speed();
     }
-}
-
-function updateVisualizationMethods_direction(direction) {
-    //console.log(selectedMethod);
+    else if (selectedMethod == "particles_speed") {
+        createFlows_particles_speed();
+    }
+    else if (selectedMethod == "particles_frequency") {
+        createFlows_particles_frequency();
+    }
 
 }
 
@@ -1350,4 +1630,17 @@ function update() {
     cssRenderer.render(cssScene, camera);
     glRenderer.render(glScene, camera);
     requestAnimationFrame(update);
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    flying_balls.forEach(ball => {
+        ball.progress += ball.speed;
+        if (ball.progress > 1) ball.progress = 0;
+        const position = ball.curve.getPointAt(ball.progress);
+        ball.mesh.position.set(position.x, position.y, position.z);
+    });
+
+    glRenderer.render(glScene, camera);
 }
